@@ -14,7 +14,7 @@ public:
 	void setUp()
 	{
 		kdt = new KDTree();
-		kdt->add(1.0, 5.0, "hello");
+		kdt->add(1, 5, "hello");
 	}
 	void tearDown()
 	{
@@ -22,18 +22,20 @@ public:
 	}
 	void test_get_point()
 	{
-		TS_ASSERT_SAME_DATA(kdt->get(1.0, 5.0), "hello", 6);
+		TS_ASSERT_SAME_DATA(kdt->get(1, 5), "hello", 6);
 	}
 	void test_add_and_get_points()
 	{
-		kdt->add(2.0, 3.0, "World");
-		TS_ASSERT_SAME_DATA(kdt->get(2.0, 3.0), "World", 6);
-		TS_ASSERT_SAME_DATA(kdt->get(1.0, 5.0), "hello", 6);
+		kdt->display();
+		kdt->add(2, 3, "World");
+		kdt->display();
+		TS_ASSERT_SAME_DATA(kdt->get(2, 3), "World", 6);
+		TS_ASSERT_SAME_DATA(kdt->get(1, 5), "hello", 6);
 	}
 	void test_has()
 	{
-		TS_ASSERT(kdt->has(1.0, 5.0));
-		TS_ASSERT(!kdt->has(5.0, 1.0));
+		TS_ASSERT(kdt->has(1, 5));
+		TS_ASSERT(!kdt->has(5, 1));
 	}
 	void test_size()
 	{
@@ -41,17 +43,17 @@ public:
 	}
 	void test_delete()
 	{
-		kdt->del(1.0, 5.0);
-		TS_ASSERT(!kdt->has(1.0, 5.0));
+		kdt->del(1, 5);
+		TS_ASSERT(!kdt->has(1, 5));
 	}
 	void test_delete_backwards()
 	{
-		kdt->add(2.0, 3.0, "World");
-		kdt->del(2.0, 3.0);
-		TS_ASSERT(!kdt->has(2.0, 3.0));
-		TS_ASSERT(kdt->has(1.0, 5.0));
-		kdt->del(1.0, 5.0);
-		TS_ASSERT(!kdt->has(1.0, 5.0));
+		kdt->add(2, 3, "World");
+		kdt->del(2, 3);
+		TS_ASSERT(!kdt->has(2, 3));
+		TS_ASSERT(kdt->has(1, 5));
+		kdt->del(1, 5);
+		TS_ASSERT(!kdt->has(1, 5));
 	}
 };
 
@@ -59,10 +61,10 @@ class KDTreeLongTestSuite : public CxxTest::TestSuite
 {
 	KDTree *kdt;
 	static int num_points;
-	static double points[][2];
+	static int points[][2];
 	static char *data[];
 	static int num_nonpoints;
-	static double nonpoints[][2];
+	static int nonpoints[][2];
 
 public:
 	void setUp()
@@ -119,18 +121,18 @@ public:
 };
 
 int KDTreeLongTestSuite::num_points = 5;
-double KDTreeLongTestSuite::points[][2] = {
-		{0.1, 0.5},
-		{1.0, 2.0},
-		{-1.0, 2.0},
-		{4.0, 3.3},
-		{1.1, 3.0},
-		{5.3, 8.2},
-		{6.7, 2.0},
-		{0.5, 9.0},
-		{9.0, 5.0},
-		{7.0, 6.0},
-		{8.1, 2.2},
+int KDTreeLongTestSuite::points[][2] = {
+		{1, 5},
+		{1, 2},
+		{-1, 2},
+		{4, 3},
+		{1, 3},
+		{5, 8},
+		{6, 2},
+		{0, 9},
+		{9, 5},
+		{7, 6},
+		{8, 2},
 	};
 char *KDTreeLongTestSuite::data[] = {
 		"one",
@@ -147,10 +149,10 @@ char *KDTreeLongTestSuite::data[] = {
 		"sticks",
 	};
 int KDTreeLongTestSuite::num_nonpoints = 4;
-double KDTreeLongTestSuite::nonpoints[][2] = {
-		{0.75, 0.82},
-		{2.3, 8.2},
-		{100.0, -2},
-		{-1.0, -1.0},
+int KDTreeLongTestSuite::nonpoints[][2] = {
+		{75, 82},
+		{2, 8},
+		{100, -2},
+		{-1, -1},
 	};
 

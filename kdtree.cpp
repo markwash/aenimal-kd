@@ -6,7 +6,7 @@ KDTree::KDTree() {
 	root = 0;
 }
 
-void KDTree::add(double x, double y, const void * data) {
+void KDTree::add(int x, int y, const void * data) {
 	kdnode next;
 	next.x = x;
 	next.y = y;
@@ -15,7 +15,7 @@ void KDTree::add(double x, double y, const void * data) {
 	insert(&nodes.back());
 }
 
-const void *KDTree::get(double x, double y) {
+const void *KDTree::get(int x, int y) {
 	
 	kdnode *n;
 	int cmp = search(x, y, &n);
@@ -26,7 +26,7 @@ const void *KDTree::get(double x, double y) {
 
 }
 
-bool KDTree::has(double x, double y) {
+bool KDTree::has(int x, int y) {
 	
 	kdnode *n;
 	int cmp = search(x, y, &n);
@@ -37,7 +37,7 @@ bool KDTree::has(double x, double y) {
 
 }
 
-void KDTree::del(double x, double y) {
+void KDTree::del(int x, int y) {
 	
 	kdnode *n;
 	int cmp = search(x, y, &n);
@@ -116,7 +116,7 @@ void KDTree::node_display(kdnode *n, int depth) {
 	node_display(n->gt, depth + 1);
 }
 
-int KDTree::compare(double x, double y, kdnode *n, int depth) {
+int KDTree::compare(int x, int y, kdnode *n, int depth) {
 
 	if (x == n->x && y == n->y) {
 		return 0;
@@ -137,7 +137,7 @@ int KDTree::compare(double x, double y, kdnode *n, int depth) {
 	}
 }
 
-int KDTree::search(double x, double y, kdnode **parent_r) {
+int KDTree::search(int x, int y, kdnode **parent_r) {
 
 	*parent_r = 0;
 	

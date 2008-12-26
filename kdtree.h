@@ -7,7 +7,7 @@ using namespace std;
 
 class kdnode {
 	public:
-	double x, y;
+	int x, y;
 	const void *data;
 	kdnode *lt, *gt, *par;
 	kdnode *next;
@@ -17,10 +17,10 @@ class KDTree {
 
 	public:
 	KDTree();
-	void add(double x, double y, const void *data);
-	const void *get(double x, double y);
-	bool has(double x, double y);
-	void del(double x, double y);
+	void add(int x, int y, const void *data);
+	const void *get(int x, int y);
+	bool has(int x, int y);
+	void del(int x, int y);
 	int size();
 	void display();
 
@@ -28,8 +28,8 @@ class KDTree {
 	vector<kdnode> nodes;
 	kdnode *root;
 
-	int compare(double x, double y, kdnode *n, int depth);
-	int search(double x, double y, kdnode **parent_r);
+	int compare(int x, int y, kdnode *n, int depth);
+	int search(int x, int y, kdnode **parent_r);
 	void insert(kdnode *n);
 	void node_display(kdnode *n, int depth);
 
