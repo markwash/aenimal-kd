@@ -8,7 +8,6 @@ using namespace std;
 
 class KDTreeBasicTestSuite : public CxxTest::TestSuite 
 {
-	KDTree *kdt;
 
 public:
 	void setUp()

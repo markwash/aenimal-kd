@@ -8,7 +8,6 @@ using namespace std;
 
 class KDTreeLongTestSuite : public CxxTest::TestSuite 
 {
-	KDTree *kdt;
 	static int num_points;
 	static int points[][2];
 	static char *data[];

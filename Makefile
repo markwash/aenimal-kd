@@ -1,5 +1,5 @@
 CXXFLAGS="-g"
-
+CFLAGS="-g"
 
 all: run_tests kdtree.o
 
