@@ -1,0 +1,32 @@
+General idea:
+
+build a kd-tree implementation in C or C++ with python bindings.
+
+the goal is to be able to use it for efficient NN search or kNN search
+
+Question 1: How will I use TDD with this?
+
+Ramble Answer 1:
+
+	I want to imagine what I want to do with this tree.
+
+	Typically, I want to do something like this:
+
+	tree = new KDTree()
+	for point in random_points(N):
+		tree.add(point, randomValue)
+	typical mapping stuff:
+	pt in tree
+    tree[pt]
+	tree.delete(pt)
+	len(tree)
+	nearest_point = tree.nnsearch(pt)
+	
+	It looks like each of these functions could be something like a test
+
+Ramble Answer 2:
+  
+	Could this be BDD?
+	
+
+
