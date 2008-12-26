@@ -9,7 +9,7 @@ run_tests: runner
 runner: runner.cpp kdtree.o
 	g++ ${CXXFLAGS} -o $@ $^
 
-runner.cpp: kdtree-test.h
+runner.cpp: kdtree_test_basic.h kdtree_test_long.h
 	cxxtestgen.py -o $@ --error-printer $^ 
 
 clean:
