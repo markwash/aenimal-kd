@@ -1,7 +1,9 @@
 // kdtree-test.h
 #include <cxxtest/TestSuite.h>
 
+extern "C" {
 #include "kdtree.h"
+}
 
 #include <iostream>
 using namespace std;
@@ -9,12 +11,16 @@ using namespace std;
 class KDTreeBasicTestSuite : public CxxTest::TestSuite 
 {
 
+	kdtree_t *kdt;
+
 public:
 	void setUp()
 	{
+		kdt = kdtree_new(0);
 	}
 	void tearDown()
 	{
+		kdtree_free(kdt);
 	}
 	void test_get_point()
 	{

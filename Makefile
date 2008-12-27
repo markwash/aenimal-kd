@@ -3,6 +3,7 @@ CFLAGS="-g"
 
 TESTS=\
 kdtree_test_basic.h \
+kdtree_private_test_basic.h \
 kdtree_test_long.h \
 simple_vector_test_basic.h \
 
