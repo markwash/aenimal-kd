@@ -41,11 +41,29 @@ public:
 		pvalue = (int *) simple_vector_get_ref(sv, 0);
 		TS_ASSERT_EQUALS(*pvalue, 72);
 	}
+	void test_ref_persist()
+	{
+		int value = 27;
+		simple_vector_set(sv, 0, &value);
+		int *pvalue;
+		pvalue = (int *) simple_vector_get_ref(sv, 0);
+		size_t cap = simple_vector_cap(sv);
+		for (cap *= 2 ; cap < 1000000; cap *= 2) {
+			simple_vector_recap(sv, cap);
+			TS_ASSERT_EQUALS(simple_vector_get_ref(sv, 0), pvalue);
+		}
+	}
 	void test_recap()
 	{
 		simple_vector_recap(sv, 10);
 		TS_ASSERT_EQUALS(simple_vector_cap(sv), 10);
 		TS_ASSERT_EQUALS(simple_vector_size(sv), 1);
+	}
+	void test_recap_lower()
+	{
+		size_t cap = simple_vector_cap(sv);
+		simple_vector_recap(sv, 1);
+		TS_ASSERT_EQUALS(simple_vector_cap(sv), cap);
 	}
 	void test_resize()
 	{

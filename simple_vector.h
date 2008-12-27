@@ -20,7 +20,6 @@ size_t simple_vector_cap(simple_vector_t *sv);
 void simple_vector_set(simple_vector_t *sv, size_t which, void *data);
 void simple_vector_get(simple_vector_t *sv, size_t which, void *data_r);
 void *simple_vector_get_ref(simple_vector_t *sv, size_t which);
-//TODO: currently these refs aren't persistent across calls to recap
 
 void simple_vector_recap(simple_vector_t *sv, size_t cap);
 void simple_vector_resize(simple_vector_t *sv, size_t sz);
