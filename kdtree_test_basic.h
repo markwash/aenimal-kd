@@ -22,6 +22,10 @@ public:
 	{
 		kdtree_free(kdt);
 	}
+	void test_add_point()
+	{
+		kdtree_add(kdt, 5.0, 5.0, "center");
+	}
 	void test_get_point()
 	{
 	}
