@@ -54,6 +54,10 @@ void simple_vector_get(simple_vector_t *sv, size_t which, void *data_r) {
 	memcpy(data_r, sv->data + sv->elem_sz * which, sv->elem_sz);
 
 }
+void *simple_vector_get_ref(simple_vector_t *sv, size_t which) {
+	assert(which < sv->sz);
+	return sv->data + sv->elem_sz * which;
+}
 
 void simple_vector_recap(simple_vector_t *sv, size_t cap) {
 

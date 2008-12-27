@@ -33,6 +33,14 @@ public:
 		simple_vector_get(sv, 0, &value);
 		TS_ASSERT_EQUALS(value, 38);
 	}
+	void test_get_ref()
+	{
+		int value = 72;
+		simple_vector_set(sv, 0, &value);
+		int *pvalue;
+		pvalue = (int *) simple_vector_get_ref(sv, 0);
+		TS_ASSERT_EQUALS(*pvalue, 72);
+	}
 	void test_recap()
 	{
 		simple_vector_recap(sv, 10);
