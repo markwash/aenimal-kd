@@ -105,6 +105,14 @@ public:
 		simple_vector_last(sv, &value);
 		TS_ASSERT_EQUALS(value, 98);
 	}
+	void test_last_ref()
+	{
+		int value = 99;
+		simple_vector_pushback(sv, &value);
+		int *pvalue;
+		pvalue = (int *) simple_vector_last_ref(sv);
+		TS_ASSERT_EQUALS(*pvalue, 99);
+	}
 	void tearDown()
 	{
 		simple_vector_free(sv);

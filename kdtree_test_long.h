@@ -8,18 +8,27 @@ using namespace std;
 
 class KDTreeLongTestSuite : public CxxTest::TestSuite 
 {
-	static int num_points;
-	static int points[][2];
+	static double num_points;
+	static double points[][2];
 	static char *data[];
-	static int num_nonpoints;
-	static int nonpoints[][2];
+	static double num_nonpoints;
+	static double nonpoints[][2];
+
+	kdtree_t *kdt;
 
 public:
 	void setUp()
 	{
+		kdt = kdtree_new(0);
+		for (int i = 0; i < num_points; i++) {
+			kdtree_add(kdt, points[i][0], points[i][1], data[i]);
+		}
 	}
 	void test_get_points()
 	{
+		for (int i = 0; i < num_points; i++) {
+			TS_ASSERT_EQUALS(kdtree_get(kdt, points[i][0], points[i][1]), data[i]);
+		}
 	}
 	void test_has()
 	{
@@ -36,8 +45,8 @@ public:
 
 };
 
-int KDTreeLongTestSuite::num_points = 5;
-int KDTreeLongTestSuite::points[][2] = {
+double KDTreeLongTestSuite::num_points = 5;
+double KDTreeLongTestSuite::points[][2] = {
 		{1, 5},
 		{1, 2},
 		{-1, 2},
@@ -64,8 +73,8 @@ char *KDTreeLongTestSuite::data[] = {
 		"up",
 		"sticks",
 	};
-int KDTreeLongTestSuite::num_nonpoints = 4;
-int KDTreeLongTestSuite::nonpoints[][2] = {
+double KDTreeLongTestSuite::num_nonpoints = 4;
+double KDTreeLongTestSuite::nonpoints[][2] = {
 		{75, 82},
 		{2, 8},
 		{100, -2},

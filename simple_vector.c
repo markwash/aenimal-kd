@@ -144,3 +144,8 @@ void simple_vector_last(simple_vector_t *sv, void *data_r) {
 	simple_vector_get(sv, sv->sz - 1, data_r);
 
 }
+void *simple_vector_last_ref(simple_vector_t *sv) {
+
+	return simple_vector_get_ref(sv, sv->sz - 1);
+
+}

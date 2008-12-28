@@ -15,4 +15,9 @@ struct kdnode {
 void kdnode_init(kdnode_t *n, double x, double y, const void *data);
 int kdnode_cmp(kdnode_t *n, double x, double y, int depth);
 
+void kdnode_list_pushback(kdnode_t **head, kdnode_t **tail, kdnode_t *n);
+
+void kdnode_tree_insert(kdnode_t **root, kdnode_t *n);
+kdnode_t *kdnode_tree_search(kdnode_t *root, double x, double y);
+
 #endif

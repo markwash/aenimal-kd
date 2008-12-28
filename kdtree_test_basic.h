@@ -17,17 +17,15 @@ public:
 	void setUp()
 	{
 		kdt = kdtree_new(0);
+		kdtree_add(kdt, 5.0, 5.0, "center");
 	}
 	void tearDown()
 	{
 		kdtree_free(kdt);
 	}
-	void test_add_point()
-	{
-		kdtree_add(kdt, 5.0, 5.0, "center");
-	}
 	void test_get_point()
 	{
+		TS_ASSERT_EQUALS(kdtree_get(kdt, 5.0, 5.0), "center"); 
 	}
 	void test_add_and_get_points()
 	{

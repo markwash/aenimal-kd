@@ -25,6 +25,61 @@ int kdnode_cmp(kdnode_t *n, double x, double y, int depth) {
 		return y < n->y ? -1 : 1;
 	}
 }
+void kdnode_list_pushback(kdnode_t **head, kdnode_t **tail, kdnode_t *n) {
+	if (*head == NULL) {
+		*head = n;
+	}
+	if (*tail != NULL) {
+		(*tail)->next = n;
+	}
+	n->prev = *tail;
+	*tail = n;
+}
+
+void kdnode_tree_insert(kdnode_t **root, kdnode_t *n) {
+	
+	if (*root == NULL) {
+		*root = n;
+		return;
+	}
+	
+	kdnode_t *parent, *cur = *root;
+	int cmp, depth = 0;
+	while (cur != NULL) {
+		parent = cur;
+		cmp = kdnode_cmp(cur, n->x, n->y, depth);
+		if (cmp < 0) {
+			cur = cur->lt;
+		} else {
+			cur = cur->gt;
+		}
+		depth++;
+	}
+		
+	n->par = parent;
+	if (cmp < 0) {
+		parent->lt = n;
+	} else {
+		parent->gt = n;
+	}
+}
+
+kdnode_t *kdnode_tree_search(kdnode_t *root, double x, double y) {
+	kdnode_t *cur = root;
+	int cmp, depth = 0;
+	while (cur != NULL) {
+		cmp = kdnode_cmp(cur, x, y, depth);
+		if (cmp == 0) {
+			return cur;
+		} else if (cmp < 0) {
+			cur = cur->lt;
+		} else {
+			cur = cur->gt;
+		}
+		depth++;
+	}
+	return NULL;
+}
 
 struct kdtree {
 	simple_vector_t *vec;
@@ -64,4 +119,22 @@ void kdtree_free(kdtree_t *kdt) {
 
 void kdtree_add(kdtree_t *kdt, double x, double y, const void *data) {
 	
+	// allocate and initialize the node
+	simple_vector_grow(kdt->vec, 1);
+	kdnode_t *n = (kdnode_t *) simple_vector_last_ref(kdt->vec);
+	kdnode_init(n, x, y, data);
+
+	// put the node at the back of the list
+	kdnode_list_pushback(&kdt->head, &kdt->tail, n);
+
+	// insert the node into the tree
+	kdnode_tree_insert(&kdt->root, n);
+
+}
+const void *kdtree_get(kdtree_t *kdt, double x, double y) {
+	kdnode_t *n = kdnode_tree_search(kdt->root, x, y);
+	if (n == NULL) {
+		return NULL;
+	}
+	return n->data;
 }

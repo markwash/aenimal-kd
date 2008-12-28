@@ -28,5 +28,6 @@ void simple_vector_shrink(simple_vector_t *sv, size_t sz);
 
 void simple_vector_pushback(simple_vector_t *sv, void *data);
 void simple_vector_last(simple_vector_t *sv, void *data_r);
+void *simple_vector_last_ref(simple_vector_t *sv);
 
 #endif
