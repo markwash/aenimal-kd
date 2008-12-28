@@ -22,6 +22,7 @@ public:
 		kdt = kdtree_new(0);
 		for (int i = 0; i < num_points; i++) {
 			kdtree_add(kdt, points[i][0], points[i][1], data[i]);
+			kdtree_internal_check(kdt);
 		}
 	}
 	void test_get_points()
@@ -47,6 +48,7 @@ public:
 	{
 		for (int i = 0; i < num_points; i++) {
 			kdtree_del(kdt, points[i][0], points[i][1]);
+			kdtree_internal_check(kdt);
 			TS_ASSERT(!kdtree_has(kdt, points[i][0], points[i][1]));
 			for (int j = i + 1; j < num_points; j++) {
 				TS_ASSERT(kdtree_has(kdt, points[j][0], points[j][1]));
@@ -57,11 +59,16 @@ public:
 	{
 		for (int i = num_points-1; i >= 0; i--) {
 			kdtree_del(kdt, points[i][0], points[i][1]);
+			kdtree_internal_check(kdt);
 			TS_ASSERT(!kdtree_has(kdt, points[i][0], points[i][1]));
 			for (int j = i - 1; j >= 0; j--) {
 				TS_ASSERT(kdtree_has(kdt, points[j][0], points[j][1]));
 			}
 		}
+	}
+	void test_internal_check()
+	{
+		kdtree_internal_check(kdt);
 	}
 
 };

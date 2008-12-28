@@ -87,6 +87,18 @@ void kdnode_list_move(kdnode_t **head, kdnode_t **tail, kdnode_t *src, kdnode_t 
 	}
 
 }
+void kdnode_list_internal_check(kdnode_t *head, kdnode_t *tail, kdnode_t *n) {
+	if (n->prev == NULL) {
+		assert(head == n);
+	} else {
+		assert(n->prev->next == n);
+	}
+	if (n->next == NULL) {
+		assert(tail == n);
+	} else {
+		assert(n->next->prev == n);
+	}
+}
 
 void kdnode_tree_insert(kdnode_t **root, kdnode_t *n) {
 	
@@ -214,6 +226,19 @@ void kdnode_tree_move(kdnode_t **root, kdnode_t *src, kdnode_t *dst) {
 	}
 
 }
+void kdnode_tree_internal_check(kdnode_t *root, kdnode_t *n) {
+	if (n->par == NULL) {
+		assert(root == n);
+	} else {
+		assert(n->par->lt == n || n->par->gt == n);
+	}
+	if (n->lt != NULL) {
+		assert(n->lt->par == n);
+	}
+	if (n->gt != NULL) {
+		assert(n->gt->par == n);
+	}
+}
 
 void kdnode_stack_push(kdnode_t **stk, kdnode_t *n) {
 	n->stk = *stk;
@@ -264,6 +289,15 @@ void kdtree_free(kdtree_t *kdt) {
 		return;
 	}
 	simple_vector_free(kdt->vec);
+}
+void kdtree_internal_check(kdtree_t *kdt) {
+	size_t i;
+	kdnode_t *n;
+	for (i = 0; i < simple_vector_size(kdt->vec); i++) {
+		n = (kdnode_t *)simple_vector_get_ref(kdt->vec, i);
+		kdnode_list_internal_check(kdt->head, kdt->tail, n);
+		kdnode_tree_internal_check(kdt->root, n);
+	}
 }
 
 void kdtree_add(kdtree_t *kdt, double x, double y, const void *data) {

@@ -19,11 +19,13 @@ int kdnode_cmp(kdnode_t *n, double x, double y, int depth);
 void kdnode_list_pushback(kdnode_t **head, kdnode_t **tail, kdnode_t *n);
 void kdnode_list_del(kdnode_t **head, kdnode_t **tail, kdnode_t *n);
 void kdnode_list_move(kdnode_t **head, kdnode_t **tail, kdnode_t *src, kdnode_t *dst);
+void kdnode_list_internal_check(kdnode_t *head, kdnode_t *tail, kdnode_t *n);
 
 void kdnode_tree_insert(kdnode_t **root, kdnode_t *n);
 kdnode_t *kdnode_tree_search(kdnode_t *root, double x, double y);
 void kdnode_tree_del(kdnode_t **root, kdnode_t *n);
 void kdnode_tree_move(kdnode_t **root, kdnode_t *src, kdnode_t *dst);
+void kdnode_tree_internal_check(kdnode_t *root, kdnode_t *n);
 
 void kdnode_stack_push(kdnode_t **stk, kdnode_t *n);
 kdnode_t *kdnode_stack_pop(kdnode_t **stk);
