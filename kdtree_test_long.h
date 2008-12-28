@@ -25,6 +25,10 @@ public:
 			kdtree_internal_check(kdt);
 		}
 	}
+	void tearDown()
+	{
+		kdtree_free(kdt);
+	}
 	void test_get_points()
 	{
 		for (int i = 0; i < num_points; i++) {
