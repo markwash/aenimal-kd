@@ -363,3 +363,75 @@ void kdtree_del(kdtree_t *kdt, double x, double y) {
 size_t kdtree_size(kdtree_t *kdt) {
 	return simple_vector_size(kdt->vec);
 }
+
+static double euclid_metric(double xdel, double ydel) {
+	return xdel * xdel + ydel * ydel;
+}
+
+void kdtree_nn(kdtree_t *kdt, double x, double y, neighbor_t *nb, metric_fn mfn) {
+	
+	assert(kdt->root != NULL);
+	kdnode_t *cur = kdt->root;
+	kdnode_t *stk = NULL;
+	double dist;
+
+	nb->dist = -1.0;
+
+	while ( 1 ) {
+
+		if (cur != NULL) {
+			kdnode_stack_push(&stk, cur);
+			if (kdnode_cmp(cur, x, y) < 0) {
+				cur = cur->lt;
+			} else {
+				cur = cur->gt;
+			}
+		} else {
+			cur = kdnode_stack_pop(&stk);
+			if (cur == NULL) {
+				return;
+			}
+			if (mfn == NULL) {
+				dist = euclid_metric(x - cur->x, y - cur->y);
+			} else {
+				dist = mfn(x - cur->x, y - cur->y);
+			}
+			if (nb->dist == -1.0 || dist < nb->dist) {
+				nb->dist = dist;
+				nb->x = cur->x;
+				nb->y = cur->y;
+				nb->data = cur->data;
+			}
+	
+			// consider distance to dividing line
+			if (cur->depth % 2 == 0) {
+				if (mfn == NULL) {
+					dist = euclid_metric(x - cur->x, 0);
+				} else {
+					dist = mfn(x - cur->x, 0);
+				}  
+			} else {
+				if (mfn == NULL) {
+					dist = euclid_metric(0, y - cur->y);
+				} else {
+					dist = mfn(0, y - cur->y);
+				}
+			}
+
+			// if the distance is less than best so far,
+			// then there can exist points beyond the line
+			// that are closer than the current best, so
+			// pursue that subtree
+			if (dist < nb->dist) {
+				if (kdnode_cmp(cur, x, y) < 0) {
+					cur = cur->gt;
+				} else {
+					cur = cur->lt;
+				}
+			} else {
+				cur = NULL;
+			}
+
+		}
+	}
+}

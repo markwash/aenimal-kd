@@ -17,4 +17,14 @@ void kdtree_del(kdtree_t *kdt, double x, double y);
 
 size_t kdtree_size(kdtree_t *kdt);
 
+struct neighbor {
+	double x, y, dist;
+	const void *data;
+};
+typedef struct neighbor neighbor_t;
+
+typedef double (*metric_fn)(double xdel, double ydel);
+
+void kdtree_nn(kdtree_t *kdt, double x, double y, neighbor_t *nb, metric_fn mfn);
+
 #endif
