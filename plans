@@ -28,5 +28,14 @@ Ramble Answer 2:
   
 	Could this be BDD?
 	
+Next steps:
+
+	Well, the implementation I have so far seems to be doing what I want, and it should be enough to make a first attempt at improving the speed of doing a bunch of simple nearest-neighbor lookups. There are also some more tests that would be nice to have in cxxtest.
+
+- python bindings #TOP PRIORITY#
+- iterator traversal / deleting within iterator context (?)
+- random-based test, lots of insertions and deletions and some nearest node checks?
+- performance measurements for random data to verify O(log n) nn lookup.
+  * it would be nice to have these in both C and Python to see if there's a nasty python overhead, once the bindings are in place
 
 
