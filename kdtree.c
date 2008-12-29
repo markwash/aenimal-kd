@@ -15,13 +15,14 @@ void kdnode_init(kdnode_t *n, double x, double y, const void *data) {
 	n->prev = NULL;
 	n->next = NULL;
 	n->stk = NULL;
+	n->depth = 0;
 	n->data = data;
 }
-int kdnode_cmp(kdnode_t *n, double x, double y, int depth) {
+int kdnode_cmp(kdnode_t *n, double x, double y) {
 	if (x == n->x && y == n->y) {
 		return 0;
 	}
-	if (depth % 2 == 0) {
+	if (n->depth % 2 == 0) {
 		return x < n->x ? -1 : 1; 
 	} else {
 		return y < n->y ? -1 : 1;
@@ -104,23 +105,24 @@ void kdnode_tree_insert(kdnode_t **root, kdnode_t *n) {
 	
 	if (*root == NULL) {
 		*root = n;
+		n->depth = 0;
 		return;
 	}
 	
 	kdnode_t *parent, *cur = *root;
-	int cmp, depth = 0;
+	int cmp;
 	while (cur != NULL) {
 		parent = cur;
-		cmp = kdnode_cmp(cur, n->x, n->y, depth);
+		cmp = kdnode_cmp(cur, n->x, n->y);
 		if (cmp < 0) {
 			cur = cur->lt;
 		} else {
 			cur = cur->gt;
 		}
-		depth++;
 	}
 		
 	n->par = parent;
+	n->depth = parent->depth + 1;
 	if (cmp < 0) {
 		parent->lt = n;
 	} else {
@@ -129,9 +131,9 @@ void kdnode_tree_insert(kdnode_t **root, kdnode_t *n) {
 }
 kdnode_t *kdnode_tree_search(kdnode_t *root, double x, double y) {
 	kdnode_t *cur = root;
-	int cmp, depth = 0;
+	int cmp;
 	while (cur != NULL) {
-		cmp = kdnode_cmp(cur, x, y, depth);
+		cmp = kdnode_cmp(cur, x, y);
 		if (cmp == 0) {
 			return cur;
 		} else if (cmp < 0) {
@@ -139,7 +141,6 @@ kdnode_t *kdnode_tree_search(kdnode_t *root, double x, double y) {
 		} else {
 			cur = cur->gt;
 		}
-		depth++;
 	}
 	return NULL;
 }
@@ -225,12 +226,17 @@ void kdnode_tree_move(kdnode_t **root, kdnode_t *src, kdnode_t *dst) {
 		dst->gt->par = dst;
 	}
 
+	// copy depth
+	dst->depth = src->depth;
+
 }
 void kdnode_tree_internal_check(kdnode_t *root, kdnode_t *n) {
 	if (n->par == NULL) {
 		assert(root == n);
+		assert(n->depth == 0);
 	} else {
 		assert(n->par->lt == n || n->par->gt == n);
+		assert(n->depth == n->par->depth + 1); 
 	}
 	if (n->lt != NULL) {
 		assert(n->lt->par == n);

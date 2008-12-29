@@ -26,23 +26,29 @@ public:
 	}
 	void test_compare()
 	{
-		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 0.0, 0.0, 0), 0);
-		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 0.0, 10.0, 0), 0);
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 0.0, 0));
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 10.0, 0));
+		n.depth = 0;
+		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 0.0, 0.0), 0);
+		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 0.0, 10.0), 0);
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 0.0));
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 10.0));
 
-		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 0.0, 0.0, 1), 0);
-		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 10.0, 0.0, 1), 0);
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 0.0, 10.0, 1));
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 10.0, 1));
+		n.depth = 1;
+		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 0.0, 0.0), 0);
+		TS_ASSERT_LESS_THAN(kdnode_cmp(&n, 10.0, 0.0), 0);
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 0.0, 10.0));
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 10.0));
 
-		TS_ASSERT_EQUALS(kdnode_cmp(&n, 5.0, 5.0, 0), 0);
-		TS_ASSERT_EQUALS(kdnode_cmp(&n, 5.0, 5.0, 1), 0);
+		n.depth = 0;
+		TS_ASSERT_EQUALS(kdnode_cmp(&n, 5.0, 5.0), 0);
+		n.depth = 1;
+		TS_ASSERT_EQUALS(kdnode_cmp(&n, 5.0, 5.0), 0);
 
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 5.0, 0.0, 0));
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 5.0, 10.0, 0));
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 0.0, 5.0, 1));
-		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 5.0, 1));
+		n.depth = 0;
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 5.0, 0.0));
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 5.0, 10.0));
+		n.depth = 1;
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 0.0, 5.0));
+		TS_ASSERT_LESS_THAN(0, kdnode_cmp(&n, 10.0, 5.0));
 	}
 	void test_list_pushback()
 	{
