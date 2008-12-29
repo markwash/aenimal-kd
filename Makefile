@@ -14,8 +14,9 @@ simple_vector.o \
 
 all: run_tests kdtree.o
 
-run_tests: cxx_runner
+run_tests: cxx_runner kdtree_test.py
 	./cxx_runner
+	python kdtree_test.py
 
 cxx_runner: cxx_runner.cpp ${OBJS}
 	g++ ${CXXFLAGS} -o $@ $^
