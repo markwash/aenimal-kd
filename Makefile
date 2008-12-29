@@ -14,9 +14,10 @@ simple_vector.o \
 
 all: run_tests kdtree.o
 
-run_tests: cxx_runner kdtree_test.py
+run_tests: cxx_test python_test
+
+cxx_test: cxx_runner
 	./cxx_runner
-	python kdtree_test.py
 
 cxx_runner: cxx_runner.cpp ${OBJS}
 	g++ ${CXXFLAGS} -o $@ $^
@@ -24,5 +25,12 @@ cxx_runner: cxx_runner.cpp ${OBJS}
 cxx_runner.cpp: ${CXX_TESTS}
 	cxxtestgen.py -o $@ --error-printer $^ 
 
+python_test: python_build kdtree_test.py
+	cd build/lib.win32-2.5/; python ../../kdtree_test.py 
+
+python_build: setup.py kdtree_module.c
+	python setup.py build -c mingw32
+
 clean:
 	rm -f *.o cxx_runner.exe cxx_runner.cpp
+	rm -rf build
