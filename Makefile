@@ -1,7 +1,7 @@
 CXXFLAGS=-g
 CFLAGS=-g
 
-TESTS=\
+CXX_TESTS=\
 kdtree_test_basic.h \
 kdtree_private_test_basic.h \
 kdtree_test_long.h \
@@ -14,14 +14,14 @@ simple_vector.o \
 
 all: run_tests kdtree.o
 
-run_tests: runner
-	./runner
+run_tests: cxx_runner
+	./cxx_runner
 
-runner: runner.cpp ${OBJS}
+cxx_runner: cxx_runner.cpp ${OBJS}
 	g++ ${CXXFLAGS} -o $@ $^
 
-runner.cpp: ${TESTS}
+cxx_runner.cpp: ${CXX_TESTS}
 	cxxtestgen.py -o $@ --error-printer $^ 
 
 clean:
-	rm -f *.o runner runner.cpp
+	rm -f *.o cxx_runner.exe cxx_runner.cpp
