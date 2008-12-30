@@ -17,6 +17,7 @@ class TestKDTree(unittest.TestCase):
 	def test_add_and_get(self):
 		self.k[5.0, 5.0] = "center"
 		val = self.k[5.0, 5.0]
+		self.assertEqual(val, "center")
 
 if __name__ == '__main__':
 	unittest.main()

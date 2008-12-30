@@ -49,15 +49,105 @@ KDTree_init(KDTree *self, PyObject *args, PyObject *kwds)
 	
 }
 
+static int object_as_two_doubles(PyObject *o, double *x, double *y)
+{
+	// check that the object is sequential
+	if (!PySequence_Check(o)) {
+		// TODO: set key exception
+		return -1;
+	}
+
+	// check that there are exactly two elements
+	if (PySequence_Size(o) != 2) {
+		// TODO: set key exception
+		return -1;
+	}
+	
+	// extract two elements
+	PyObject *x_elem, *y_elem;
+	if ((x_elem = PySequence_GetItem(o, 0)) == NULL) {
+		return -1;
+	}
+	if ((y_elem = PySequence_GetItem(o, 1)) == NULL) {
+		Py_DECREF(x_elem);
+		return -1;
+	}
+
+	// check that both are numbers
+	if (!PyNumber_Check(x_elem)) {
+		// TODO: set key exception
+		Py_DECREF(x_elem);
+		Py_DECREF(y_elem);
+		return -1;
+	}
+	if (!PyNumber_Check(y_elem)) {
+		// TODO: set key exception
+		Py_DECREF(x_elem);
+		Py_DECREF(y_elem);
+		return -1;
+	}
+
+	// coerce numbers to floats
+	PyObject *x_float, *y_float;
+	if ((x_float = PyNumber_Float(x_elem)) == NULL) {
+		Py_DECREF(x_elem);
+		Py_DECREF(y_elem);
+		return -1;
+	}
+	if ((y_float = PyNumber_Float(y_elem)) == NULL) {
+		Py_DECREF(x_elem);
+		Py_DECREF(y_elem);
+		Py_DECREF(x_float);
+		return -1;
+	}
+
+	// extract C doubles
+	*x = PyFloat_AS_DOUBLE(x_float);
+	*y = PyFloat_AS_DOUBLE(y_float);
+
+	// return success
+	Py_DECREF(x_elem);
+	Py_DECREF(y_elem);
+	Py_DECREF(x_float);
+	Py_DECREF(y_float);
+	return 0;
+
+}
+
 static PyObject *
 kdtree_get_item(KDTree *self, PyObject *key)
 {
-	Py_RETURN_NONE;
+	double x, y;
+	if (object_as_two_doubles(key, &x, &y) == -1) {
+		return NULL;
+	}
+
+	PyObject *ret;
+	ret = (PyObject *) kdtree_get(self->kdt, x, y);
+	if (ret == NULL) {
+		// TODO: set key exception
+		return NULL;
+	}
+	
+	Py_INCREF(ret);
+	return ret;
 }
 
 static int
 kdtree_set_item(KDTree *self, PyObject *key, PyObject *value)
 {
+	if (value == NULL) {
+		// TODO: exception?
+		return -1;
+	}
+
+	double x, y;
+	if (object_as_two_doubles(key, &x, &y) == -1) {
+		return -1;
+	}
+
+	kdtree_add(self->kdt, x, y, value);
+
 	return 0;
 }
 
