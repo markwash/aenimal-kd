@@ -364,6 +364,28 @@ size_t kdtree_size(kdtree_t *kdt) {
 	return simple_vector_size(kdt->vec);
 }
 
+struct kdtree_iter_ctx {
+	kdnode_t node;
+};
+
+kdtree_iter_ctx_t *kdtree_iter_ctx_new(kdtree_t *kdt) {
+	return (kdtree_iter_ctx_t *) kdt->head;
+}
+void kdtree_iter_ctx_free(kdtree_iter_ctx_t *ctx) {
+	return;
+}
+void kdtree_iter_ctx_next(kdtree_iter_ctx_t **ctx, double *x, double *y, const void **data) {
+	kdnode_t *n;
+	n = (kdnode_t *) *ctx;
+	if (n == NULL) {
+		return;
+	}
+	*x = n->x;
+	*y = n->y;
+	*data = n->data;
+	*ctx = (kdtree_iter_ctx_t *) n->next;
+}
+
 static double euclid_metric(double xdel, double ydel) {
 	return xdel * xdel + ydel * ydel;
 }

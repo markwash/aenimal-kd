@@ -17,6 +17,13 @@ void kdtree_del(kdtree_t *kdt, double x, double y);
 
 size_t kdtree_size(kdtree_t *kdt);
 
+struct kdtree_iter_ctx;
+typedef struct kdtree_iter_ctx kdtree_iter_ctx_t;
+
+kdtree_iter_ctx_t *kdtree_iter_ctx_new(kdtree_t *kdt); 
+void kdtree_iter_ctx_free(kdtree_iter_ctx_t *ctx);
+void kdtree_iter_ctx_next(kdtree_iter_ctx_t **ctx, double *x, double *y, const void **data);
+
 struct neighbor {
 	double x, y, dist;
 	const void *data;

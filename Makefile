@@ -7,6 +7,7 @@ kdtree_private_test_basic.h \
 kdtree_test_long.h \
 simple_vector_test_basic.h \
 kdtree_test_nn.h \
+kdtree_test_iterate.h \
 
 OBJS=\
 kdtree.o \
