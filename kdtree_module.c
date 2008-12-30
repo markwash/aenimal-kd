@@ -1,8 +1,11 @@
 #include <Python.h>
+#include "structmember.h"
+
+#include "kdtree.h"
 
 typedef struct {
 	PyObject_HEAD
-	/* Type-specific fields go here. */
+	kdtree_t *kdt;
 } KDTreeObject;
 
 static PyTypeObject KDTreeType = {

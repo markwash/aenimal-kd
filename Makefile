@@ -12,7 +12,7 @@ OBJS=\
 kdtree.o \
 simple_vector.o \
 
-all: run_tests kdtree.o
+all: run_tests ${OBJS} 
 
 run_tests: cxx_test python_test
 
@@ -28,7 +28,7 @@ cxx_runner.cpp: ${CXX_TESTS}
 python_test: python_build kdtree_test.py
 	cd build/lib.win32-2.5/; python ../../kdtree_test.py 
 
-python_build: setup.py kdtree_module.c
+python_build: setup.py kdtree_module.c ${OBJS}
 	python setup.py build -c mingw32
 
 clean:
