@@ -11,5 +11,12 @@ class TestKDTree(unittest.TestCase):
 		k3 = kdtree.KDTree(0)
 		k4 = kdtree.KDTree(100)
 
+	def test_add(self):
+		self.k[5.0, 5.0] = "center"
+
+	def test_add_and_get(self):
+		self.k[5.0, 5.0] = "center"
+		val = self.k[5.0, 5.0]
+
 if __name__ == '__main__':
 	unittest.main()

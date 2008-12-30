@@ -49,6 +49,25 @@ KDTree_init(KDTree *self, PyObject *args, PyObject *kwds)
 	
 }
 
+static PyObject *
+kdtree_get_item(KDTree *self, PyObject *key)
+{
+	Py_RETURN_NONE;
+}
+
+static int
+kdtree_set_item(KDTree *self, PyObject *key, PyObject *value)
+{
+	return 0;
+}
+
+PyMappingMethods kdtree_mapping = {
+	0,				/* inquiry mp_length;				__len__ */
+	(binaryfunc) kdtree_get_item,	/* binaryfunc mp_subscript;			__getitem__ */
+	(objobjargproc) kdtree_set_item,/* objobjargproc mp_ass_subscript;	__setitem__ */
+};
+
+
 static PyTypeObject KDTreeType = {
 	PyObject_HEAD_INIT(NULL)
 	0,						/*ob_size*/
@@ -63,7 +82,7 @@ static PyTypeObject KDTreeType = {
 	0,						/*tp_repr*/
 	0,						/*tp_as_number*/
 	0,						/*tp_as_sequence*/
-	0,						/*tp_as_mapping*/
+	&kdtree_mapping,		/*tp_as_mapping*/
 	0,						/*tp_hash */
 	0,						/*tp_call*/
 	0,						/*tp_str*/
