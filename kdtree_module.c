@@ -6,15 +6,56 @@
 typedef struct {
 	PyObject_HEAD
 	kdtree_t *kdt;
-} KDTreeObject;
+} KDTree;
+
+static void
+KDTree_dealloc(KDTree *self)
+{
+	self->ob_type->tp_free((PyObject *) self);
+}
+
+static int
+KDTree_init(KDTree *self, PyObject *args, PyObject *kwds)
+{
+	// if the tree isn't null, we're being called twice,
+	// which just isn't cool
+	if (self->kdt != NULL) {
+		// TODO: figure out exceptions and set one
+		return -1;
+	}
+
+	static char* kwdlist[] = {"initcap", NULL};
+	size_t cap = 0;
+
+	// parse the arguments to figure out the optional
+	// initial capacity
+	if (! PyArg_ParseTupleAndKeywords(
+				args,
+				kwds,
+				"|I",
+				kwdlist,
+				&cap
+			) ) {
+		return -1;
+	}
+
+	// TODO: figure out exceptions and set one
+	self->kdt = kdtree_new(cap);
+	if (self->kdt == NULL) {
+		return -1;
+	}
+	
+	return 0;
+	
+}
 
 static PyTypeObject KDTreeType = {
 	PyObject_HEAD_INIT(NULL)
 	0,						/*ob_size*/
 	"kdtree.KDTree",		/*tp_name*/
-	sizeof(KDTreeObject),	/*tp_basicsize*/
+	sizeof(KDTree),			/*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	0,						/*tp_dealloc*/
+	(destructor)KDTree_dealloc,	/*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -31,6 +72,23 @@ static PyTypeObject KDTreeType = {
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
 	"KDTree objects",		/* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	0,						/* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)KDTree_init,	/* tp_init */
+	0,						/* tp_alloc */
+	0,						/* tp_new */
 };
 
 static PyMethodDef methods[] = {
