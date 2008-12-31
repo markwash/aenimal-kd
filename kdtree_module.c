@@ -11,6 +11,20 @@ typedef struct {
 static void
 KDTree_dealloc(KDTree *self)
 {
+	// decref on all the objects in the tree
+	double x, y;
+	PyObject *o;
+	kdtree_iter_ctx_t *ctx;
+	ctx = kdtree_iter_ctx_new(self->kdt);
+	while (ctx != NULL) {
+		kdtree_iter_ctx_next(&ctx, &x, &y, (const void **) &o);
+		Py_DECREF(o);
+	}
+
+	// free the tree
+	kdtree_free(self->kdt);
+	self->kdt = NULL;
+
 	self->ob_type->tp_free((PyObject *) self);
 }
 
@@ -148,6 +162,7 @@ KDTree_set_item(KDTree *self, PyObject *key, PyObject *value)
 		Py_XDECREF((PyObject *) kdtree_get(self->kdt, x, y));
 		kdtree_del(self->kdt, x, y);
 	} else {
+		Py_INCREF(value);
 		kdtree_add(self->kdt, x, y, value);
 	}
 
