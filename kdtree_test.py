@@ -19,5 +19,46 @@ class TestKDTree(unittest.TestCase):
 		val = self.k[5.0, 5.0]
 		self.assertEqual(val, "center")
 
+	def test_set_nonseq(self):
+		d = {}
+		# self.k[d] = 'error'
+		self.assertRaises(KeyError, self.k.__setitem__, d, 'error')
+
+	def test_set_nonduo(self):
+		# self.k[(5.0)] = 'error'
+		self.assertRaises(KeyError, self.k.__setitem__, (5.0), 'error')
+
+	def test_set_nonnum(self):
+		# self.k['left', 'right'] = 'error'
+		self.assertRaises(KeyError, self.k.__setitem__, ('left', 'right'), 'error')
+		# self.k[1.0, 'right'] = 'error'
+		self.assertRaises(KeyError, self.k.__setitem__, (1.0, 'right'), 'error')
+		# self.k['left', 1.0] = 'error'
+		self.assertRaises(KeyError, self.k.__setitem__, ('left', 1.0), 'error')
+
+	def test_set_int_and_get_int(self):
+		self.k[0, 0] = 'bottomleft'
+		val = self.k[0, 0]
+		self.assertEquals(val, 'bottomleft')
+
+	def test_set_int_and_get(self):
+		self.k[0, 0] = 'bottomleft'
+		val = self.k[0.0, 0.0]
+		self.assertEquals(val, 'bottomleft')
+
+	def test_set_and_get_int(self):
+		self.k[0.0, 0.0] = 'bottomleft'
+		val = self.k[0, 0]
+		self.assertEquals(val, 'bottomleft')
+
+	def test_get_nonexist(self):
+		# self.k[1.0, 1.0]
+		self.assertRaises(KeyError, self.k.__getitem__, (1.0, 1.0))
+
+	def test_add_and_del(self):
+		self.k[5.0, 5.0] = 'center'
+		del self.k[5.0, 5.0]
+
+
 if __name__ == '__main__':
 	unittest.main()

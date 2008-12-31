@@ -20,7 +20,7 @@ KDTree_init(KDTree *self, PyObject *args, PyObject *kwds)
 	// if the tree isn't null, we're being called twice,
 	// which just isn't cool
 	if (self->kdt != NULL) {
-		// TODO: figure out exceptions and set one
+		PyErr_SetObject(PyExc_NotImplementedError, (PyObject *) self);
 		return -1;
 	}
 
@@ -39,9 +39,9 @@ KDTree_init(KDTree *self, PyObject *args, PyObject *kwds)
 		return -1;
 	}
 
-	// TODO: figure out exceptions and set one
 	self->kdt = kdtree_new(cap);
 	if (self->kdt == NULL) {
+		PyErr_SetObject(PyExc_MemoryError, (PyObject *) self);
 		return -1;
 	}
 	
@@ -49,56 +49,43 @@ KDTree_init(KDTree *self, PyObject *args, PyObject *kwds)
 	
 }
 
-static int object_as_two_doubles(PyObject *o, double *x, double *y)
+static int key_as_two_doubles(PyObject *key, double *x, double *y)
 {
+	PyObject *x_elem = NULL, *y_elem = NULL;
+	PyObject *x_float = NULL, *y_float = NULL;	
+
 	// check that the object is sequential
-	if (!PySequence_Check(o)) {
-		// TODO: set key exception
-		return -1;
+	if (!PySequence_Check(key)) {
+		goto keyerror;
 	}
 
 	// check that there are exactly two elements
-	if (PySequence_Size(o) != 2) {
-		// TODO: set key exception
-		return -1;
+	if (PySequence_Size(key) != 2) {
+		goto keyerror;
 	}
 	
 	// extract two elements
-	PyObject *x_elem, *y_elem;
-	if ((x_elem = PySequence_GetItem(o, 0)) == NULL) {
-		return -1;
+	if ((x_elem = PySequence_GetItem(key, 0)) == NULL) {
+		goto keyerror;
 	}
-	if ((y_elem = PySequence_GetItem(o, 1)) == NULL) {
-		Py_DECREF(x_elem);
-		return -1;
+	if ((y_elem = PySequence_GetItem(key, 1)) == NULL) {
+		goto keyerror;
 	}
 
 	// check that both are numbers
 	if (!PyNumber_Check(x_elem)) {
-		// TODO: set key exception
-		Py_DECREF(x_elem);
-		Py_DECREF(y_elem);
-		return -1;
+		goto keyerror;
 	}
 	if (!PyNumber_Check(y_elem)) {
-		// TODO: set key exception
-		Py_DECREF(x_elem);
-		Py_DECREF(y_elem);
-		return -1;
+		goto keyerror;
 	}
 
 	// coerce numbers to floats
-	PyObject *x_float, *y_float;
 	if ((x_float = PyNumber_Float(x_elem)) == NULL) {
-		Py_DECREF(x_elem);
-		Py_DECREF(y_elem);
-		return -1;
+		goto keyerror;
 	}
 	if ((y_float = PyNumber_Float(y_elem)) == NULL) {
-		Py_DECREF(x_elem);
-		Py_DECREF(y_elem);
-		Py_DECREF(x_float);
-		return -1;
+		goto keyerror;
 	}
 
 	// extract C doubles
@@ -112,20 +99,29 @@ static int object_as_two_doubles(PyObject *o, double *x, double *y)
 	Py_DECREF(y_float);
 	return 0;
 
+	// return key error
+	keyerror:
+	PyErr_SetObject(PyExc_KeyError, key);
+	Py_XDECREF(x_elem);
+	Py_XDECREF(y_elem);
+	Py_XDECREF(x_float);
+	Py_XDECREF(y_float);
+	return -1;
+
 }
 
 static PyObject *
 kdtree_get_item(KDTree *self, PyObject *key)
 {
 	double x, y;
-	if (object_as_two_doubles(key, &x, &y) == -1) {
+	if (key_as_two_doubles(key, &x, &y) == -1) {
 		return NULL;
 	}
 
 	PyObject *ret;
 	ret = (PyObject *) kdtree_get(self->kdt, x, y);
 	if (ret == NULL) {
-		// TODO: set key exception
+		PyErr_SetObject(PyExc_KeyError, key);
 		return NULL;
 	}
 	
@@ -136,17 +132,18 @@ kdtree_get_item(KDTree *self, PyObject *key)
 static int
 kdtree_set_item(KDTree *self, PyObject *key, PyObject *value)
 {
-	if (value == NULL) {
-		// TODO: exception?
-		return -1;
-	}
-
 	double x, y;
-	if (object_as_two_doubles(key, &x, &y) == -1) {
+	if (key_as_two_doubles(key, &x, &y) == -1) {
 		return -1;
 	}
 
-	kdtree_add(self->kdt, x, y, value);
+	if (value == NULL) {
+		// actually deleting
+		Py_XDECREF((PyObject *) kdtree_get(self->kdt, x, y));
+		kdtree_del(self->kdt, x, y);
+	} else {
+		kdtree_add(self->kdt, x, y, value);
+	}
 
 	return 0;
 }
