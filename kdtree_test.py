@@ -58,7 +58,29 @@ class TestKDTree(unittest.TestCase):
 	def test_add_and_del(self):
 		self.k[5.0, 5.0] = 'center'
 		del self.k[5.0, 5.0]
+		self.assertRaises(KeyError, self.k.__getitem__, (5.0, 5.0))
 
+	def test_in(self):
+		self.k[5.0, 5.0] = 'center'
+		self.assertTrue((5.0, 5.0) in self.k)
+
+	def test_len_empty(self):
+		self.assertEquals(len(self.k), 0)
+
+	def test_add_and_len(self):
+		self.k[5.0, 5.0] = 'center'
+		self.assertEquals(len(self.k), 1)
+		self.k[0.0, 10.0] = 'topleft'
+		self.assertEquals(len(self.k), 2)
+
+	def test_add_and_del_and_len(self):
+		self.k[5.0, 5.0] = 'center'
+		self.k[10.0, 0.0] = 'topright'
+		self.assertEquals(len(self.k), 2)
+		del self.k[5.0, 5.0]
+		self.assertEquals(len(self.k), 1)
+		del self.k[10.0, 0.0]
+		self.assertEquals(len(self.k), 0)
 
 if __name__ == '__main__':
 	unittest.main()

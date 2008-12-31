@@ -110,8 +110,14 @@ static int key_as_two_doubles(PyObject *key, double *x, double *y)
 
 }
 
+static Py_ssize_t
+KDTree_size(KDTree *self)
+{
+	return kdtree_size(self->kdt);
+}
+
 static PyObject *
-kdtree_get_item(KDTree *self, PyObject *key)
+KDTree_get_item(KDTree *self, PyObject *key)
 {
 	double x, y;
 	if (key_as_two_doubles(key, &x, &y) == -1) {
@@ -130,7 +136,7 @@ kdtree_get_item(KDTree *self, PyObject *key)
 }
 
 static int
-kdtree_set_item(KDTree *self, PyObject *key, PyObject *value)
+KDTree_set_item(KDTree *self, PyObject *key, PyObject *value)
 {
 	double x, y;
 	if (key_as_two_doubles(key, &x, &y) == -1) {
@@ -148,12 +154,47 @@ kdtree_set_item(KDTree *self, PyObject *key, PyObject *value)
 	return 0;
 }
 
-PyMappingMethods kdtree_mapping = {
-	0,				/* inquiry mp_length;				__len__ */
-	(binaryfunc) kdtree_get_item,	/* binaryfunc mp_subscript;			__getitem__ */
-	(objobjargproc) kdtree_set_item,/* objobjargproc mp_ass_subscript;	__setitem__ */
+static PyMappingMethods KDTree_as_mapping = {
+	(inquiry) KDTree_size,			/* inquiry mp_length;				__len__ */
+	(binaryfunc) KDTree_get_item,	/* binaryfunc mp_subscript;			__getitem__ */
+	(objobjargproc) KDTree_set_item,/* objobjargproc mp_ass_subscript;	__setitem__ */
 };
 
+static int
+KDTree_contains(KDTree *self, PyObject *key)
+{
+	double x, y;
+	if (key_as_two_doubles(key, &x, &y) == -1) {
+		return -1;
+	}
+
+	return kdtree_has(self->kdt, x, y);
+}
+
+static PySequenceMethods KDTree_as_sequence = {
+	0,				/* lenfunc sq_length */
+	0,				/* binaryfunc sq_concat */
+	0,				/* ssizeargfunc sq_repeat */
+	0,				/* ssizeargfunc sq_item */
+	0,				/* ssizessizeargfunc sq_slice */
+	0,				/* ssizeobjargproc sq_ass_item */
+	0,				/* ssizessizeobjargproc sq_ass_slice */
+	(objobjproc) KDTree_contains,/* objobjproc sq_contains */
+	0,				/* binaryfunc sq_inplace_concat */
+	0,				/* ssizeargfunc sq_inplace_repeat */
+};
+
+static PyObject *
+KDTree_nn(KDTree *self, PyObject *args)
+{
+	Py_RETURN_NONE;
+}
+
+static PyMethodDef KDTree_methods[] = {
+	{"nn", (PyCFunction) KDTree_nn, 
+		METH_VARARGS, "nearest neighbor search"},
+	{NULL},	/* Sentinel */
+};
 
 static PyTypeObject KDTreeType = {
 	PyObject_HEAD_INIT(NULL)
@@ -168,8 +209,8 @@ static PyTypeObject KDTreeType = {
 	0,						/*tp_compare*/
 	0,						/*tp_repr*/
 	0,						/*tp_as_number*/
-	0,						/*tp_as_sequence*/
-	&kdtree_mapping,		/*tp_as_mapping*/
+	&KDTree_as_sequence,	/*tp_as_sequence*/
+	&KDTree_as_mapping,		/*tp_as_mapping*/
 	0,						/*tp_hash */
 	0,						/*tp_call*/
 	0,						/*tp_str*/
@@ -184,7 +225,7 @@ static PyTypeObject KDTreeType = {
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	0,						/* tp_methods */
+	KDTree_methods,			/* tp_methods */
 	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
