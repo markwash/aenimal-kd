@@ -9,6 +9,10 @@ simple_vector_test_basic.h \
 kdtree_test_nn.h \
 kdtree_test_iterate.h \
 
+PY_TESTS=\
+kdtree_test.py \
+kdtree_test_nn.py \
+
 OBJS=\
 kdtree.o \
 simple_vector.o \
@@ -26,12 +30,13 @@ cxx_runner: cxx_runner.cpp ${OBJS}
 cxx_runner.cpp: ${CXX_TESTS}
 	cxxtestgen.py -o $@ --error-printer $^ 
 
-python_test: python_build kdtree_test.py
-	cd build/lib.win32-2.5/; python ../../kdtree_test.py 
+python_test: python_build test_suite.py ${PY_TESTS}
+	PYTHONPATH="./build/lib.win32-2.5/;./" python test_suite.py 
 
 python_build: setup.py kdtree_module.c ${OBJS}
 	python setup.py build -c mingw32
 
 clean:
 	rm -f *.o cxx_runner.exe cxx_runner.cpp
+	rm -f *.pyc
 	rm -rf build
