@@ -187,7 +187,16 @@ static PySequenceMethods KDTree_as_sequence = {
 static PyObject *
 KDTree_nn(KDTree *self, PyObject *args)
 {
-	Py_RETURN_NONE;
+	double x, y;
+	if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
+		return NULL;
+	}
+
+	neighbor_t nb;
+	kdtree_nn(self->kdt, x, y, &nb, 0);
+
+	return Py_BuildValue("dddO", nb.x, nb.y, nb.dist,
+			(PyObject *) nb.data);
 }
 
 static PyMethodDef KDTree_methods[] = {
