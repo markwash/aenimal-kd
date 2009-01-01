@@ -213,10 +213,17 @@ KDTree_nn(KDTree *self, PyObject *args)
 	return Py_BuildValue("dddO", nb.x, nb.y, nb.dist,
 			(PyObject *) nb.data);
 }
+static PyObject *
+KDTree_render_simple(KDTree *self, PyObject *args)
+{
+	Py_RETURN_NONE;
+}
 
 static PyMethodDef KDTree_methods[] = {
 	{"nn", (PyCFunction) KDTree_nn, 
 		METH_VARARGS, "nearest neighbor search"},
+	{"render_simple", (PyCFunction) KDTree_render_simple, 
+		METH_VARARGS, "simple numpy rendering with default metric"},
 	{NULL},	/* Sentinel */
 };
 
