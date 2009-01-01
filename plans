@@ -39,3 +39,37 @@ Next steps:
   * it would be nice to have these in both C and Python to see if there's a nasty python overhead, once the bindings are in place
 
 
+Update:
+
+There is now:
+- a decently complete python binding (tested)
+- iterator traversal (but not in python)
+- and manual tests to indicate we are actually operating efficiently
+
+But now the goal is to get really fast rendering of the following algorithm:
+- each point in the tree has a single color associated with it
+- for each pixel in an image (at a given x, y position),
+	* find the nn point to that pixel
+	* pixel color = point color
+
+So we want to add a method to the kdtree python object that will do this rendering:
+
+KDTree_render_simple(KDTree *self, PyObject *args)
+
+which implements something like 
+
+KDTree_render_simple(KDTree *self, PyArrayObject *arr)
+
+Assumptions:
+	arr is of size (l, w, 3) X <type>
+	all the objects stored in the KDTree are array objects of size (3) X <type>
+	
+Algorithm:
+	enforce assumptions on arr
+	for i in xrange(l):
+		for j in xrange(w):
+			color = kdtree_nn(self.kdt, i, j)
+			enforce assumptions on color
+			arr[i, j, :] = color
+
+
