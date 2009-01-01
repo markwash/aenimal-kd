@@ -12,6 +12,7 @@ kdtree_test_iterate.h \
 PY_TESTS=\
 kdtree_test.py \
 kdtree_test_nn.py \
+kdtree_test_render.py \
 
 OBJS=\
 kdtree.o \
