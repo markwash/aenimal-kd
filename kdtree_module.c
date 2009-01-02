@@ -1,6 +1,8 @@
 #include <Python.h>
 #include "structmember.h"
 
+#include <numpy/ndarrayobject.h>
+
 #include "kdtree.h"
 
 typedef struct {
@@ -216,6 +218,60 @@ KDTree_nn(KDTree *self, PyObject *args)
 static PyObject *
 KDTree_render_simple(KDTree *self, PyObject *args)
 {
+	PyArrayObject *array;
+	if (!PyArg_ParseTuple(args, "O!", &PyArray_Type, &array)) {
+		return NULL;
+	}
+
+	if (array->nd != 3) {
+		PyErr_SetString(PyExc_ValueError, "array must be 3 dimensional");
+		return NULL;
+	}
+
+	int length = PyArray_DIM(array, 0);
+	int height = PyArray_DIM(array, 1);
+	int veclen = PyArray_DIM(array, 2);
+
+	double x, y;
+	int i, xi, yi;
+	neighbor_t nb;
+	PyObject *o;
+	PyArrayObject *vec;
+	for (x = 0.0, xi = 0; x < length; x += 1.0, xi += 1) {
+		for (y = 0.0, yi = 0; y < height; y += 1.0, yi += 1) {
+		
+			kdtree_nn(self->kdt, x, y, &nb, NULL);
+			o = (PyObject *) nb.data;
+			if (!PyArray_Check(o)) {
+				PyErr_SetString(PyExc_ValueError,
+					"KDTree values must only be numpy.ndarray objects");
+				return NULL;
+			}
+			vec = (PyArrayObject *) o;
+			if (vec->nd != 1) {
+				PyErr_SetString(PyExc_ValueError,
+					"KDTree value arrays must be 1 dimensional");
+				return NULL;
+			}
+			if (PyArray_TYPE(vec) != PyArray_TYPE(array)) {
+				PyErr_SetString(PyExc_ValueError,
+					"KDTree value arrays must have same type as input array");
+				return NULL;
+			}
+			if (PyArray_DIM(vec, 0) != veclen) {
+				PyErr_SetString(PyExc_ValueError,
+					"KDTree value arrays must have same length as 3rd dim of input array");
+				return NULL;
+			}
+		
+			// copy the vector into the right place in the array
+			for (i = 0; i < veclen; i++) {
+				memcpy(PyArray_GETPTR3(array, xi, yi, i), PyArray_GETPTR1(vec, i), PyArray_ITEMSIZE(vec));
+			}
+
+		}
+	}
+
 	Py_RETURN_NONE;
 }
 
@@ -290,5 +346,7 @@ initkdtree(void)
 
 	Py_INCREF(&KDTreeType);
 	PyModule_AddObject(m, "KDTree", (PyObject *)&KDTreeType);
+
+	import_array();
 }
 
